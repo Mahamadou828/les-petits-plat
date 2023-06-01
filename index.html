@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="index.css">
+        <title>Les petits plats</title>
+    </head>
+    <body>
+        <section id="banner" class="banner">
+            <img class="logo" alt="les petits plats logo" src="asset/logo.svg">
+            <h1>
+                CHERCHEZ PARMI PLUS DE 1500 RECETTES <br>
+                DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES
+            </h1>
+            <div>
+                <input id="search" name="search" type="text" placeholder="Rechercher une recette, un ingrédient, ..." />
+                <button>
+                    <img alt="search icon" src="asset/search-icon.svg" />
+                </button>
+            </div>
+        </section>
+
+        <section id="filter" class="filter">
+            <div class="dropdown" id="ingredients">
+                <div class="dropdown-header">
+                    <p>Ingredients ↓</p>
+                </div>
+                <div class="dropdown-content">
+                    <input type="text" class="search-input" placeholder="Search">
+                    <ul class="choices-list">
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown" id="tools">
+                <div class="dropdown-header">
+                    <p>Appareils ↓</p>
+                </div>
+                <div class="dropdown-content">
+                    <input type="text" class="search-input" placeholder="Search">
+                    <ul class="choices-list">
+                    </ul>
+                </div>
+            </div>
+            <div class="dropdown" id="utensils">
+                <div class="dropdown-header">
+                    <p>Ustensiles ↓</p>
+                </div>
+                <div class="dropdown-content">
+                    <input type="text" class="search-input" placeholder="Search">
+                    <ul class="choices-list">
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="tag-list" class="tag_list">
+
+        </section>
+
+        <section id="recipe-list" class="recipe_list">
+
+        </section>
+
+        <script src="./data/recipe.js"></script>
+        <script src="./components/recipe.js"></script>
+        <script src="./components/tag.js"></script>
+        <script src="./components/filter.js"></script>
+        <script src="./index.js"></script>
+    </body>
+</html>
