@@ -1,5 +1,4 @@
 function createTag(val, key, handleClose) {
-    console.log(val, key)
     const tag = document.createElement("div")
     tag.classList.add("tag")
     tag.setAttribute("id", val.toLowerCase().replaceAll(" ", "_"))

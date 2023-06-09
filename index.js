@@ -7,6 +7,14 @@ let currentRecipes = [...recipes]
 
 let search = ""
 
+function debounce(fn, delay) {
+    let timer;
+    return (() => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(), delay);
+    })();
+}
+
 function handleTag(val, key) {
     switch (key) {
         case "ingredients":
@@ -67,7 +75,6 @@ function handleFilter(val, key) {
     }
 
     currentRecipes = findRecipe(currentRecipes, search, ingredientsFilter, utensilsFilter, appliancesFilter)
-    console.log(currentRecipes)
 
     const newFilter = extractValues(currentRecipes)
 
@@ -77,23 +84,23 @@ function handleFilter(val, key) {
 }
 
 function findRecipe(recipes, principalSearch, ingredientTags, utensilTags, appareilTag) {
-    const matchRecipe = [];
+    let matchRecipe = [];
 
-    if (principalSearch.length < 3) {
-        return matchRecipe;
-    }
-
-    for (const recipe of recipes) {
-        if (
-            recipe.name.toLowerCase().includes(principalSearch.toLowerCase()) ||
-            recipe.description.toLowerCase().includes(principalSearch.toLowerCase()) ||
-            recipe.ingredients.some(
-                (ingredient) =>
-                    ingredient.ingredient.toLowerCase().includes(principalSearch.toLowerCase())
-            )
-        ) {
-            matchRecipe.push(recipe);
+    if(principalSearch.length > 0) {
+        for (const recipe of recipes) {
+            if (
+                recipe.name.toLowerCase().includes(principalSearch.toLowerCase()) ||
+                recipe.description.toLowerCase().includes(principalSearch.toLowerCase()) ||
+                recipe.ingredients.some(
+                    (ingredient) =>
+                        ingredient.ingredient.toLowerCase().includes(principalSearch.toLowerCase())
+                )
+            ) {
+                matchRecipe.push(recipe);
+            }
         }
+    } else {
+        matchRecipe = recipes
     }
 
     if (matchRecipe.length === 0) {
@@ -172,7 +179,6 @@ function filterByTag(recipes, champ, tags) {
                 if (
                     recette[champ] &&
                     tags.every((tag) => {
-                        console.log(recette[champ], tag.toLowerCase())
                         return recette[champ] === tag.toLowerCase()
                     })
                 ) {
@@ -224,18 +230,20 @@ async function init() {
 
     //handle search with search input
     document.querySelector("#search").addEventListener("input", ({target: {value}}) => {
-        if(value.length < 3) {
-            return
-        }
-        search = value
+        debounce(() => {
+            if(value.length < 3) {
+                return
+            }
+            search = value
 
-        currentRecipes = findRecipe(recipes, search, ingredientsFilter, utensilsFilter, appliancesFilter)
+            currentRecipes = findRecipe(recipes, search, ingredientsFilter, utensilsFilter, appliancesFilter)
 
-        const newFilter = extractValues(currentRecipes)
+            const newFilter = extractValues(currentRecipes)
 
-        createFilters(newFilter.ingredients, newFilter.utensils, newFilter.appliances, handleFilter)
+            createFilters(newFilter.ingredients, newFilter.utensils, newFilter.appliances, handleFilter)
 
-        displayRecipes(currentRecipes)
+            displayRecipes(currentRecipes)
+        }, 300)
     })
 }
 
