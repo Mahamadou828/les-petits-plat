@@ -18,13 +18,13 @@ function debounce(fn, delay) {
 function handleTag(val, key) {
     switch (key) {
         case "ingredients":
-            ingredientsFilter = ingredientsFilter.filter((filter) => filter != val)
+            ingredientsFilter = filter(ingredientsFilter, (filter) => filter != val)
             break
         case "tools":
-            appliancesFilter = appliancesFilter.filter((filter) => filter != val)
+            appliancesFilter = filter(appliancesFilter,(filter) => filter != val)
             break
         case "utensils":
-            utensilsFilter = utensilsFilter.filter((filter) => filter != val)
+            utensilsFilter = filter(utensilsFilter,(filter) => filter != val)
             break
     }
 
@@ -42,22 +42,22 @@ function handleFilter(val, key) {
     let status = "add"
     switch (key) {
         case "ingredients":
-            if (ingredientsFilter.includes(val)) {
-                ingredientsFilter = ingredientsFilter.filter((filter) => filter != val)
+            if (includes(ingredientsFilter, val)) {
+                ingredientsFilter = filter(ingredientsFilter,(filter) => filter != val)
                 status = "remove"
             }
             ingredientsFilter.push(val)
             break
         case "tools":
-            if (appliancesFilter.includes(val)) {
-                appliancesFilter = appliancesFilter.filter((filter) => filter != val)
+            if (includes(appliancesFilter, val)) {
+                appliancesFilter = filter(appliancesFilter,(filter) => filter != val)
                 status = "remove"
             }
             appliancesFilter.push(val)
             break
         case "utensils":
-            if (utensilsFilter.includes(val)) {
-                utensilsFilter = utensilsFilter.filter((filter) => filter != val)
+            if (includes(utensilsFilter, val)) {
+                utensilsFilter = filter(utensilsFilter, (filter) => filter != val)
                 status = "remove"
             }
             utensilsFilter.push(val)
@@ -87,16 +87,23 @@ function findRecipe(recipes, principalSearch, ingredientTags, utensilTags, appar
     let matchRecipe = [];
 
     if(principalSearch.length > 0) {
-        for (const recipe of recipes) {
-            if (
-                recipe.name.toLowerCase().includes(principalSearch.toLowerCase()) ||
-                recipe.description.toLowerCase().includes(principalSearch.toLowerCase()) ||
-                recipe.ingredients.some(
-                    (ingredient) =>
-                        ingredient.ingredient.toLowerCase().includes(principalSearch.toLowerCase())
-                )
+        for(let i = 0; i < recipes.length; i++) {
+            const recipe = recipes[i]
+            const lowerCasePrincipalSearch = principalSearch.toLowerCase();
+
+            if(
+                recipe.name.toLowerCase().indexOf(lowerCasePrincipalSearch) !== -1 ||
+                recipe.name.toLocaleString().indexOf(lowerCasePrincipalSearch) !== -1
             ) {
-                matchRecipe.push(recipe);
+                const ingredients = recipe.ingredients
+
+                for(let j = 0; j < ingredients.length; j++) {
+                    const ingredient = ingredients[j]
+                    if(ingredient.ingredient.toLowerCase().indexOf(lowerCasePrincipalSearch) !== -1) {
+                        matchRecipe.push(recipe)
+                        break
+                    }
+                }
             }
         }
     } else {
@@ -128,25 +135,26 @@ function findRecipe(recipes, principalSearch, ingredientTags, utensilTags, appar
 
     const res = []
 
-    matchRecipe.forEach((recipe) => {
+    for(let i = 0; i < matchRecipe.length; i++) {
+        const recipe = matchRecipe[i]
         let valid = true
 
-        if (!mapIngredientRecipe[recipe.id] && ingredientTags.length > 0) {
+        if(!mapIngredientRecipe[recipe.id] && ingredientTags.length > 0) {
             valid = false
         }
 
-        if (!mapUtensilsRecipe[recipe.id] && utensilTags.length > 0) {
+        if(!mapUtensilsRecipe[recipe.id] && utensilTags.length > 0) {
             valid = false
         }
 
-        if (!mapApplianceRecipe[recipe.id] && appareilTag.length > 0) {
+        if(!mapApplianceRecipe[recipe.id] && appareilTag.length > 0) {
             valid = false
         }
 
         if(valid) {
             res.push(recipe)
         }
-    })
+    }
 
     return res
 }
@@ -155,7 +163,8 @@ function filterByTag(recipes, champ, tags) {
     const mapRecipe = {};
     switch (champ) {
         case "ustensils":
-            for (const recette of recipes) {
+            for (let i = 0; i < recipes.length; i++) {
+                const recette = recipes[i];
                 if (
                     recette[champ] &&
                     tags.every((tag) => recette[champ].map((item) => item.toLowerCase()).includes(tag.toLowerCase()))
@@ -165,7 +174,8 @@ function filterByTag(recipes, champ, tags) {
             }
             break
         case "ingredients":
-            for (const recette of recipes) {
+            for (let i = 0; i < recipes.length; i++) {
+                const recette = recipes[i];
                 if (
                     recette[champ] &&
                     tags.every((tag) => recette[champ].map((ingredient) => ingredient.ingredient.toLowerCase()).includes(tag.toLowerCase()))
@@ -175,7 +185,8 @@ function filterByTag(recipes, champ, tags) {
             }
             break
         case "appliance":
-            for (const recette of recipes) {
+            for (let i = 0; i < recipes.length; i++) {
+                const recette = recipes[i];
                 if (
                     recette[champ] &&
                     tags.every((tag) => {
@@ -225,8 +236,6 @@ async function init() {
         })
 
     })
-
-
 
     //handle search with search input
     document.querySelector("#search").addEventListener("input", ({target: {value}}) => {

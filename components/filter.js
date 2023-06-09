@@ -6,18 +6,18 @@ function extractValues(recipes) {
 
     recipes.forEach(recipe => {
         recipe.ingredients.forEach(ingredient => {
-            if (ingredient.ingredient && !ingredients.includes(ingredient.ingredient)) {
+            if (ingredient.ingredient && !includes(ingredients, ingredient.ingredient)) {
                 ingredients.push(ingredient.ingredient);
             }
         });
 
         recipe.ustensils.forEach(utensil => {
-            if (utensil && !utensils.includes(utensil)) {
+            if (utensil && !includes(utensils, utensil)) {
                 utensils.push(utensil);
             }
         });
 
-        if (recipe.appliance && !appliances.includes(recipe.appliance)) {
+        if (recipe.appliance && !includes(appliances, recipe.appliance)) {
             appliances.push(recipe.appliance);
         }
     });
